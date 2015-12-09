@@ -50,7 +50,7 @@ class DBConnector:
 
     def get_database_name(self, db_name='test', collection_name='microblogging'):
         if not self.__isConnected:
-            print "Error !! The database have not been connected. Call 'connect()' before using it"
+            print("Error !! The database have not been connected. Call 'connect()' before using it")
             return None
 
         key = db_name + ':' + collection_name

@@ -1,21 +1,15 @@
 function mapper() {
-    getUnigrams = function (text) {
-        arrWords = text.toString().replace(/[.,]/g,"").split(" ");
-        var arrNewWords = [];
+    text = this.text;
+    if (text) {
+        var removePunc = text.toString().toLowerCase().replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+        var finalText = punctuationless.replace(/\s{2,}/g, " ");
+        var arrWords = finalText.split(" ");
 
-        for (var i = 0; i < arrWords.length; i++) {
-            var wordOccurence = arrWords[i];
-            if(typeof arrNewWords[wordOccurence] === 'undefined') {
-                var wordObj = {wordOccurence: 1};
-                arrNewWords[arrWords[i]] = wordObj;
-            } else {
-                arrNewWords[arrWords[i]] = arrNewWords[wordOccurence]+1;
+        for (var i = arrWords.length - 1; i >= 0; i--) {
+            word = arrWords[i].trim();
+            if (word) {
+                emit(word, 1);
             }
         }
-        return arrNewWords;
-    };
-
-    var unigrams = getUnigrams(this.text);
-
-    emit(this.id, {unigrams: unigrams});
-}
+    }
+};
