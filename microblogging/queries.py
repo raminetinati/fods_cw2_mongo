@@ -41,7 +41,7 @@ class TweetApp(object):
         tweets_number = self.tweets_no
         percentage = 100 * sum_of_tweets / tweets_number
 
-        seq = ("\nThe top 10 users published", str(percentage), "% of the self.tweets.")
+        seq = ("\nThe top 10 users published", str(percentage), "% of the tweets.")
         return " ".join(seq)
 
     def get_earliest_and_latest_date(self):
