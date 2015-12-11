@@ -21,7 +21,7 @@ class TweetGame(object):
         distinct_users = self.tweets.distinct('id_member')
         distinct_users_number = len(distinct_users)
 
-        seq = ("There are", str(distinct_users_number), "unique users.")
+        seq = ("\nThere are", str(distinct_users_number), "unique users.")
         return " ".join(seq)
 
     # Question 2
@@ -40,7 +40,7 @@ class TweetGame(object):
         tweets_number = self.tweets_no
         percentage = 100 * sum_of_tweets / tweets_number
 
-        seq = ("The top 10 users published", str(percentage), "% of the self.tweets.")
+        seq = ("\nThe top 10 users published", str(percentage), "% of the self.tweets.")
         return " ".join(seq)
 
     def get_earliest_and_latest_date(self):
@@ -57,7 +57,7 @@ class TweetGame(object):
     def get_earliest_and_latest_date_result(self):
         dates = self.get_earliest_and_latest_date()
 
-        seq = ("The earliest date is: ", dates[0], "and the latest date is: ", dates[1])
+        seq = ("\nThe earliest date is: ", dates[0], "and the latest date is: ", dates[1])
         return " ".join(seq)
 
     # Question 4
@@ -71,7 +71,7 @@ class TweetGame(object):
 
         mean_td = (latest_ts - earlier_ts) / (self.get_tweets_number() - 1)
 
-        seq = ("The mean time delta between all messages is", mean_td)
+        seq = ("\nThe mean time delta between all messages is", str(mean_td))
         return " ".join(seq)
 
     # question 5
@@ -102,7 +102,10 @@ class TweetGame(object):
         ]
 
         mean_lgth = list(self.db.meanLengths.aggregate(pipeline))
-        seq = ("The mean length of all the tweets is", str(mean_lgth))
+        for item in mean_lgth:
+            result = item['meanLen']
+
+        seq = ("\nThe mean length of all the tweets is", str(result))
         return " ".join(seq)
 
     # Question 6_1
@@ -112,7 +115,7 @@ class TweetGame(object):
             text = this.text;
             if (text) {
                 var removePunc = text.toString().toLowerCase().replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-                var finalText = punctuationless.replace(/\s{2,}/g, " ");
+                var finalText = removePunc.replace(/\s{2,}/g, " ");
                 var arrWords = finalText.split(" ");
                 for (var i = arrWords.length - 1; i >= 0; i--) {
                     word = arrWords[i].trim();
@@ -134,9 +137,15 @@ class TweetGame(object):
 
         pipeline = [
             {"$sort": {"value": -1}},
-            {"$limit": -10}
+            {"$limit": 10}
         ]
-        return list(self.db.unigramResults.aggregate(pipeline))
+
+        result_string = "\nThe top resulting bigrams are: \n"
+        counter = 1
+        for item in list(self.db.unigramResults.aggregate(pipeline)):
+            result_string += str(counter) + ". " + item['_id'] + " : " + str(item['value']) + "\n"
+            counter += 1
+        return result_string
 
     # Question 6_2
     def get_bigrams(self):
@@ -147,12 +156,12 @@ class TweetGame(object):
                     var removePunc = text.toString().toLowerCase().replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
                     var finalText = removePunc.replace(/\s{2,}/g, " ");
                     var arrWords = finalText.split(" ");
-    
+
                     for (var i=0; i<arrWords.length-1; i++) {
                         var word = arrWords[i];
                         var next_word = arrWords[i+1];
                         var bigram = word + " " + next_word;
-    
+
                         if (bigram) {
                             emit(bigram, 1);
                         }
@@ -170,9 +179,15 @@ class TweetGame(object):
 
         pipeline = [
             {"$sort": {"value": -1}},
-            {"$limit": -10}
+            {"$limit": 10}
         ]
-        return list(self.db.bigramResults.aggregate(pipeline))
+
+        result_string = "\nThe top resulting bigrams are: \n"
+        counter = 1
+        for item in list(self.db.bigramResults.aggregate(pipeline)):
+            result_string += str(counter) + ". " + item['_id'] + " : " + str(item['value']) + "\n"
+            counter += 1
+        return result_string
 
     # Question 7
     def get_average_hashtags(self):
@@ -206,7 +221,7 @@ class TweetGame(object):
 
         average_hashtags = list(self.db.countsOfHashtags.aggregate(pipeline))
 
-        seq = ("The average number of hashtags in a message is:", str(average_hashtags[0]['avgHashTags']))
+        seq = ("\nThe average number of hashtags in a message is:", str(average_hashtags[0]['avgHashTags']))
         return " ".join(seq)
 
     # Question 8
@@ -217,12 +232,12 @@ class TweetGame(object):
                 var minLat = 49.42;
                 var maxLng = 1.8607;
                 var minLng = -7.6333;
-    
+
                 var cenLat = (maxLat+minLat)/2;
                 var cenLng = (maxLng+minLng)/2;
                 var lng = this.geo_lng;
                 var lat = this.geo_lat;
-    
+
                 var coord = "";
                 if (lng >= cenLng) {
                     if (lat > cenLat) {
@@ -260,9 +275,12 @@ class TweetGame(object):
         for item in topLocation:
             result = item
 
-        seq = ("The most popular area in the UK is the", locs[result['_id']], "with", str(result['value']), " tweets")
+        seq = ("\nThe most popular area in the UK is the", locs[result['_id']], "with", str(result['value']), "tweets")
         return " ".join(seq)
 
 
-tweet_game = TweetGame()
-print(tweet_game.get_bigrams())
+x = TweetGame()
+results = []
+for name, method in TweetGame.__dict__.iteritems():
+    if callable(method):
+        print(method(x))
