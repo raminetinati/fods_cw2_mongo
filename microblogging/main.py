@@ -24,7 +24,7 @@ def main(*agrs):
 # Read CSV File
 def import_in_mongo(rows):
     importer = SimpleDataImporter()
-    importer.run(rows, True)
+    importer.run(rows)
     importer.finish()
 
 
@@ -50,7 +50,6 @@ def clean(file):
             row_dict['geo_lng'] = row[5]
 
             totalRows.append(row_dict)
-        exit()
         return totalRows
 
 

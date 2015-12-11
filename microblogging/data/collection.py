@@ -145,7 +145,7 @@ class SimpleDataImporter:
         logging.basicConfig(filename=os.path.join(LOG_PATH,'import.log'), level=logging.INFO, filemode='w')
         logging.info('Connected to MongoDB')
 
-    def run(self, csv_rows, cleanImport=False):
+    def run(self, csv_rows, cleanImport=True):
         print(len(csv_rows))
         if self.__db is not None:
             try:
