@@ -181,21 +181,30 @@ class DataReader:
         self.__writeDir = dr
 
 class SimpleDataImporter:
-
     def __init__(self, loggingEnable=False):
         self.__dbConnector = DBConnector(os.path.join(CONFIG_PATH, 'config.json'),)
         self.__dbConnector.connect()
-        self.__db = self.__dbConnector.get_database_name('microblogging', 'data')
+        self.__db = self.__dbConnector.get_database_name('microblogging', 'tweets')
         logging.basicConfig(filename=os.path.join(LOG_PATH,'import.log'), level=logging.INFO, filemode='w')
         logging.info('Connected to MongoDB')
 
-    def run(self, file_name, cleanImport=False):
-        dataReader = DataReader(DATASET_PATH)
-        if dataReader.fileExists(file_name) and (self.__db != None):
-            if cleanImport: self.__dbConnector.reset_database_name('microblogging', 'data')
-            self.__db.openBulk()
-            logging.info('Open bulk for inserting data')
-            dataReader.readFile(file_name, self.readCallback)
+    def run(self, csv_rows, cleanImport=False):
+        if self.__db is not None:
+            try:
+                if cleanImport:
+                    self.__dbConnector.reset_database_name('microblogging', 'tweets')
+                self.__db.openBulk()
+                logging.info('Open bulk for inserting data')
+                counter = 0
+                for row in csv_rows:
+                    counter += 1
+                    if counter is 1:
+                        print(row)
+                    self.__db.addToBulk(row)
+                self.__db.closeBulk()
+                logging.info('Close bulk')
+            except Exception as ex:
+                print(ex)
 
     def readCallback(self, obj, isHeader, isFinished):
         if isFinished:

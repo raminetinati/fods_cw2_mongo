@@ -2,13 +2,16 @@ function mapper() {
     text = this.text;
     if (text) {
         var removePunc = text.toString().toLowerCase().replace(/[.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-        var finalText = punctuationless.replace(/\s{2,}/g, " ");
+        var finalText = removePunc.replace(/\s{2,}/g, " ");
         var arrWords = finalText.split(" ");
 
-        for (var i = arrWords.length - 1; i >= 0; i--) {
-            word = arrWords[i].trim();
-            if (word) {
-                emit(word, 1);
+        for (var i=0; i<arrWords.length-1; i++) {
+            var word = arrWords[i];
+            var next_word = arrWords[i+1];
+            var bigram = word.concat(next_word);
+
+            if (bigram) {
+                emit(bigram, 1);
             }
         }
     }
