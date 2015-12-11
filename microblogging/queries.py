@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
-
-
 import calendar
 import datetime
 from pymongo import MongoClient
 from bson.code import Code
 
 
-class TweetGame(object):
+class TweetApp(object):
     def __init__(self):
         self.client = MongoClient('mongodb://localhost:27017/')
         self.db = self.client['microblogging']
@@ -282,8 +280,18 @@ class TweetGame(object):
         return " ".join(seq)
 
 
-x = TweetGame()
-results = []
-for name, method in TweetGame.__dict__.iteritems():
-    if callable(method):
-        print(method(x))
+def main(*agrs):
+    app = TweetApp()
+    print("It will take some time....Please note!")
+
+    print(app.get_distinct_users())
+    print(app.get_top_ten_users_tweet_percentage())
+    print(app.get_earliest_and_latest_date_result())
+    print(app.get_mean_time_deltas())
+    print(app.get_mean_length_of_msg())
+    print(app.get_unigrams())
+    print(app.get_bigrams())
+    print(app.get_most_popular_area())
+
+
+if __name__ == '__main__': main()

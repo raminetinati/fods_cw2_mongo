@@ -153,11 +153,14 @@ class SimpleDataImporter:
                     self.__dbConnector.reset_database_name('microblogging', 'tweets')
                 self.__db.openBulk()
                 print("starting the import...")
+                counter = 0
                 for csv_row in csv_rows:
+                    counter += 1
                     self.__db.addToBulk(csv_row)
                 self.__db.closeBulk()
             except Exception as ex:
                 print(ex)
+        print("Imported " + str(counter) + " lines")
 
     def finish(self):
         self.__dbConnector.disconnect()

@@ -42,8 +42,8 @@ def clean(file):
                 continue
 
             row_dict = dict()
-            row_dict['id'] = clean_id(row[0])
-            row_dict['id_member'] = row[1]
+            row_dict['id'] = row[0]
+            row_dict['id_member'] = clean_id_member(row[1])
             row_dict['timestamp'] = row[2]
             row_dict['text'] = unicode(row[3], errors='replace')
             row_dict['geo_lat'] = row[4]
@@ -53,11 +53,10 @@ def clean(file):
         return totalRows
 
 
-def clean_id(tweet_id):
-    return tweet_id
-
-
 def clean_id_member(tweet_id_member):
+    match = re.match("^\d*$", tweet_id_member)
+    if match is None:
+        tweet_id_member = str(abs(int(tweet_id_member)))
     return tweet_id_member
 
 
