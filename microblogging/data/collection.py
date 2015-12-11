@@ -137,49 +137,6 @@ class DBCoordinator:
         return self.db.name
 
 
-class DataReader:
-
-    def __init__(self, read_dir, write_dir='./'):
-        self.__readDir = read_dir
-        self.__writeDir = write_dir
-
-    def readFile(self, file_name, callback):
-        if not self.fileExists(file_name):
-            return False
-
-        file_path = self.appendStringWithPath(self.readDir, file_name)
-        file = open(file_path, 'r')
-        i = 0
-        for readLine in file:
-            callback(readLine, i == 0, False)
-            i += 1
-
-        file.close()
-        callback("", False, True)
-
-    def fileExists(self, file_name):
-        return os.path.exists(self.appendStringWithPath(self.readDir, file_name))
-
-
-    def appendStringWithPath(self, s1, s2):
-        return s1 + '/' + s2
-
-    @property
-    def readDir(self):
-        return self.__readDir
-
-    @readDir.setter
-    def readDir(self, dr):
-        self.__readDir = dr
-
-    @property
-    def writeDir(self):
-        return self.__writeDir
-
-    @writeDir.setter
-    def writeDir(self, dr):
-        self.__writeDir = dr
-
 class SimpleDataImporter:
     def __init__(self, loggingEnable=False):
         self.__dbConnector = DBConnector(os.path.join(CONFIG_PATH, 'config.json'),)

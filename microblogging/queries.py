@@ -6,7 +6,6 @@ from pymongo import MongoClient
 from bson.code import Code
 
 
-
 class TweetGame(object):
     def __init__(self):
         self.client = MongoClient('mongodb://localhost:27017/')
@@ -263,6 +262,7 @@ class TweetGame(object):
 
         seq = ("The most popular area in the UK is the", locs[result['_id']], "with", str(result['value']), " tweets")
         return " ".join(seq)
+
 
 tweet_game = TweetGame()
 print(tweet_game.get_bigrams())
