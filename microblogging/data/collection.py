@@ -146,29 +146,18 @@ class SimpleDataImporter:
         logging.info('Connected to MongoDB')
 
     def run(self, csv_rows, cleanImport=False):
+        print(len(csv_rows))
         if self.__db is not None:
             try:
                 if cleanImport:
                     self.__dbConnector.reset_database_name('microblogging', 'tweets')
                 self.__db.openBulk()
-                logging.info('Open bulk for inserting data')
-                counter = 0
-                for row in csv_rows:
-                    counter += 1
-                    if counter is 1:
-                        print(row)
-                    self.__db.addToBulk(row)
+                print("starting the import...")
+                for csv_row in csv_rows:
+                    self.__db.addToBulk(csv_row)
                 self.__db.closeBulk()
-                logging.info('Close bulk')
             except Exception as ex:
                 print(ex)
-
-    def readCallback(self, obj, isHeader, isFinished):
-        if isFinished:
-            self.__db.closeBulk()
-            logging.info('Close bulk')
-        else:
-            self.__db.addToBulk(json.loads(obj))
 
     def finish(self):
         self.__dbConnector.disconnect()

@@ -9,47 +9,48 @@ import re
 
 DATASET_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'dataset'))
 INPUT_FILE = os.path.join(DATASET_PATH, 'microblogDataset_COMP6235_CW2.csv')
-CSV_OUTPUT_FILE = os.path.join(DATASET_PATH, 'microblogDataset_COMP6235_CW2_2.csv')
-OUTPUT_FILE = os.path.join(DATASET_PATH, 'microblogDataset_COMP6235_CW2.json')
 
-
-# ● id - a unique identifier of the tuple
-# ● id_member - a unique identifier of the user who posted the message
-# ● timestamp - a UTC timestamp of when the message was published
-# ● text - the microblog message that was published
-# ● geo_lat - the latitude coordinate of where the message was posted from
-# ● geo_lng - the longitude coordinate of where the message was posted from.
 
 def main(*agrs):
-    read_csv(INPUT_FILE, CSV_OUTPUT_FILE, format)
+    print("Opening csv ...")
+    csv_rows = clean(INPUT_FILE)
+    try:
+        print("Importing rows in mongo")
+        import_in_mongo(csv_rows)
+    except Exception as ex:
+        print(ex)
 
 
 # Read CSV File
-def read_csv(file, csv_output, format):
-    csv_rows = []
-    # with open(file, 'rb') as csvfile, open(csv_output, 'a') as outfile:
-    #     print("Opening csv file...")
-    #     filtered = (line.replace('\r', '') for line in csvfile)
-    #     error_counter = 0
-    #     line_no = 0
-    #     for row in filtered:
-    #         outfile.write(row)
-    #         line_no += 1
-    #     print("Finished parsing csv file")
-    #     print('\n' + str(error_counter) + " errors found")
-    #     outfile.close()
-    clean(csv_output)
+def import_in_mongo(rows):
+    importer = SimpleDataImporter()
+    importer.run(rows, True)
+    importer.finish()
 
 
-def clean(csv_output):
-    with open(csv_output, 'rb') as csvfile:
-        reader = csv.DictReader(csvfile)
-        line_no = 0
+def clean(file):
+    with open(file, 'rb') as infile:
+        filtered = (line.replace('\r', '') for line in infile)
+        reader = csv.reader(filtered)
+        totalRows = []
+        counter = 0
+
+        print("Cleaning csv ...")
         for row in reader:
-            line_no += 1
-            print row
-            if line_no == 2300:
-                exit()
+            if counter == 0:
+                counter = 1
+                continue
+
+            row_dict = dict()
+            row_dict['id'] = row[0]
+            row_dict['id_member'] = row[1]
+            row_dict['timestamp'] = row[2]
+            row_dict['text'] = unicode(row[3], errors='replace')
+            row_dict['geo_lat'] = row[4]
+            row_dict['geo_lng'] = row[5]
+
+            totalRows.append(row_dict)
+        return totalRows
 
 
 if __name__ == '__main__': main()
