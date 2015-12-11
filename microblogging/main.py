@@ -55,12 +55,10 @@ def clean(file):
 
 
 def clean_id(tweet_id):
-    print(type(tweet_id))
     return tweet_id
 
 
 def clean_id_member(tweet_id_member):
-    print(type(tweet_id_member))
     return tweet_id_member
 
 

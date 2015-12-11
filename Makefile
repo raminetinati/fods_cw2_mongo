@@ -7,8 +7,8 @@ PEP8?=pep8
 PROJECT_DIR=.
 
 
-all: clean test pep8
-	./scripts/install_dependencies.sh development
+run: clean
+	./scripts/run.sh
 
 
 env: clean system_deps
