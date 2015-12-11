@@ -141,7 +141,7 @@ class TweetApp(object):
             {"$limit": 10}
         ]
 
-        result_string = "\nThe top resulting bigrams are: \n"
+        result_string = "\nThe top resulting unigrams are: \n"
         counter = 1
         for item in list(self.db.unigramResults.aggregate(pipeline)):
             result_string += str(counter) + ". " + item['_id'] + " : " + str(item['value']) + "\n"
